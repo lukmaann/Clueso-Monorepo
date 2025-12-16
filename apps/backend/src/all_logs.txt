@@ -1,0 +1,150 @@
+[2025-12-16T07:51:27.808Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T07:51:54.450Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T07:51:54.595Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T07:51:54.608Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T07:52:49.834Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 2.656
+}
+----------------------------------
+[2025-12-16T07:56:53.750Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T07:57:23.016Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 3.739
+}
+----------------------------------
+[2025-12-16T08:02:20.993Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T08:02:31.972Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 4.364
+}
+----------------------------------
+[2025-12-16T08:04:25.146Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T08:04:35.807Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 3.758
+}
+----------------------------------
+[2025-12-16T08:12:37.582Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T08:12:47.790Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 3.123
+}
+----------------------------------
+[2025-12-16T08:36:33.556Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T08:37:27.630Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 8.849
+}
+----------------------------------
+[2025-12-16T08:51:18.358Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 3.755
+}
+----------------------------------
+[2025-12-16T08:53:58.753Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T08:53:59.321Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-16T08:53:59.322Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-16T08:53:59.354Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 7.503,
+  "eventCount": 0,
+  "url": "https://chatgpt.com/"
+}
+----------------------------------
+[2025-12-16T08:53:59.367Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 7.503
+}
+----------------------------------
+[2025-12-16T09:13:42.803Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T09:13:43.379Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-16T09:13:43.381Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-16T09:13:43.505Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 54.243,
+  "eventCount": 7,
+  "url": "https://polynote.vercel.app/canvas/j574ynf4ez37cmwwgzg70vbbsn7wv8bs"
+}
+----------------------------------
+[2025-12-16T09:13:43.611Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 54.243
+}
+----------------------------------
+[2025-12-16T09:22:53.270Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T09:23:24.163Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T09:23:56.156Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T09:23:56.452Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-16T09:23:56.452Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-16T09:23:56.519Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 19.759,
+  "eventCount": 4,
+  "url": "https://polynote.vercel.app/home"
+}
+----------------------------------
+[2025-12-16T09:23:56.579Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 19.759
+}
+----------------------------------
+[2025-12-16T12:32:22.072Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T12:32:22.328Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-16T12:32:22.326Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-16T12:32:22.381Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 18.685,
+  "eventCount": 1,
+  "url": "https://github.com/Tushar7436/Clueso_extension"
+}
+----------------------------------
+[2025-12-16T12:32:22.418Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 18.685
+}
+----------------------------------
+[2025-12-16T12:35:59.057Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T12:38:58.714Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-16T12:39:07.072Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 2.234
+}
+----------------------------------
