@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [0.1.2] - 2025-12-17
+### Added
+- **Feat**: Enhanced Video Player
+    - Added professional timeline track with visual "Clips" for each step.
+    - Implemented fine-grained Volume Control slider.
+    - Added hover previews for steps on the timeline.
+    - Polished UI with smooth gradients and better interactivity.
+
 ### Changed
 - **UX/UI**: 
     - **Zoom Removal**: Removed the automatic "Zoom In/Out" visual effect from the video player to eliminate disruptive flickering and improve focus.
