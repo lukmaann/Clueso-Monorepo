@@ -5,29 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.1] - 2025-12-17
+### Fixed
+- **Critical AI Failure**: Resolved `404 Not Found` from Gemini API by upgrading model to `gemini-2.5-flash`. See [BUG_FIXES_LOG.md#1-gemini-model-access-error-404-not-found](docs/BUG_FIXES_LOG.md).
+- **Port Stability**: Fixed random port binding issues by enforcing strict ports (`3000` for FE, `3001` for BE). See [BUG_FIXES_LOG.md#2-application-port-conflicts](docs/BUG_FIXES_LOG.md).
 
-### Documentation & Compliance
-- **Architecture**:
-    - Created `ARCHITECTURE.md` establishing the **Modular Monolith** pattern.
-    - Defined "Separation of Concerns" (SoC) strategy: `apps/frontend` (Consumer), `apps/backend` (Orchestrator), `apps/extension` (Source).
-    - detailed the technology reasoning: Why **Deepgram** (Speed/Cost) vs ElevenLabs, and Why **Gemini Flash** (Context window) vs GPT-4.
-    - Outlined scaling roadmap: Local Disk -> S3, In-Memory -> Postgres, Sync -> Redis Queues.
-- **Deep-Dive Layer Docs**:
-    - `docs/FRONTEND_LAYER.md`: Documented the "Step Sync" logic (synchronizing video timestamps with sidebar steps).
-    - `docs/BACKEND_LAYER.md`: Documented the `ai.service.js` integration, Deepgram API payloads, and Gemini prompting strategy.
-    - `docs/EXTENSION_LAYER.md`: Documented the `content.js` listener logic and `background.js` upload lifecycle.
-    - `docs/DATA_FLOW.md`: Created detailed Sequence Diagrams and JSON Schema inputs/outputs for every API call.
+### Infrastructure
+- **Documentation**: Added `docs/BUG_FIXES_LOG.md` to track error details and solutions.
+- **Cleanup**: Removed sensitive/temporary debug files (`debug_gemini.js`, `alllogs.log`).
+
+## [0.1.0] - 2025-12-16
+### Added
 - **Security**:
     - Hardened `.gitignore` to recursively exclude **all** environment files (`.env`, `.env.local`, `.env.production`) from every subdirectory (`apps/*/`).
     - Removed sensitive artifact files (`metadata.json`, `found_models.json`) and temporary debug scripts (`debug_keys.js`, `test_tts.js`) to prevent key leakage.
-
-### Bug Fixes & Infrastructure
-- **Connection Stability**:
-    - Enforced usage of **Gemini 2.5 Flash** model (`gemini-2.5-flash`) to resolve `404 Not Found` errors caused by model access issues.
-    - Implemented stricter port binding: Frontend strictly on `3000` and Backend strictly on `3001` (via `strictPort: true` and `.env` config) to prevent port conflicts during restarts.
-- **Cleanup**:
-    - Removed temporary debug scripts (`debug_gemini.js`, `debug_gemini.mjs`) and error log files (`alllogs.log`, `gemini_error.log`) to maintain repository hygiene.
 
 ### Architecture & Codebase Cleanup
 - **Organization**:
