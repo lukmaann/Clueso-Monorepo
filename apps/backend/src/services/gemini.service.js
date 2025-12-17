@@ -6,28 +6,28 @@ import path from 'path';
 const getEnv = (key) => process.env[key];
 
 export const GeminiService = {
-    /**
-     * MAIN AI: Events + Transcript -> Structured JSON Guide
-     * @param {Array} events - DOM events
-     * @param {number} videoDuration - In seconds
-     * @param {string} rawTranscript - Full transcript
-     * @param {Object} viewport - { width, height }
-     * @returns {Promise<Object>} - The structured JSON Guide
-     */
-    async generateGuide(events, videoDuration, rawTranscript, viewport) {
-        const apiKey = getEnv('GEMINI_API_KEY');
-        if (!apiKey) {
-            console.warn('[GeminiService] API Key Missing');
-            return null; // Return null to signal fallback needed
-        }
+  /**
+   * MAIN AI: Events + Transcript -> Structured JSON Guide
+   * @param {Array} events - DOM events
+   * @param {number} videoDuration - In seconds
+   * @param {string} rawTranscript - Full transcript
+   * @param {Object} viewport - { width, height }
+   * @returns {Promise<Object>} - The structured JSON Guide
+   */
+  async generateGuide(events, videoDuration, rawTranscript, viewport) {
+    const apiKey = getEnv('GEMINI_API_KEY');
+    if (!apiKey) {
+      console.warn('[GeminiService] API Key Missing');
+      return null; // Return null to signal fallback needed
+    }
 
-        // Prepare context
-        const eventLog = events.map(e => {
-            const t = (typeof e.target === 'string') ? e.target : (e.target?.text || e.target?.selector || 'element');
-            return `[${e.timestamp}ms] ${e.type} on "${t}"`;
-        }).join('\n');
+    // Prepare context
+    const eventLog = events.map(e => {
+      const t = (typeof e.target === 'string') ? e.target : (e.target?.text || e.target?.selector || 'element');
+      return `[${e.timestamp}ms] ${e.type} on "${t}"`;
+    }).join('\n');
 
-        const prompt = `
+    const prompt = `
       You are an AI processing engine for a screen-recording product tutorial system.
       
       INPUTS:
@@ -68,27 +68,27 @@ export const GeminiService = {
       }
     `;
 
-        try {
-            const genAI = new GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({ model: "gemini-flash-latest", generationConfig: { responseMimeType: "application/json" } });
-            const result = await model.generateContent(prompt);
-            const response = result.response;
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "application/json" } });
+      const result = await model.generateContent(prompt);
+      const response = result.response;
 
-            if (response.text()) {
-                const guide = JSON.parse(response.text());
-                guide.processedAt = new Date().toISOString();
-                return guide;
-            }
-            throw new Error('Gemini response was empty');
-        } catch (e) {
-            console.error('[GeminiService] Generation Failed:', e);
-            // Log error to file
-            try {
-                fs.appendFileSync(path.resolve('gemini_error.log'), `[${new Date().toISOString()}] ${e.toString()} \nStack: ${e.stack}\n\n`);
-            } catch (fsErr) {
-                console.error('Could not write to error log:', fsErr);
-            }
-            return null; // Signals fallback needed
-        }
+      if (response.text()) {
+        const guide = JSON.parse(response.text());
+        guide.processedAt = new Date().toISOString();
+        return guide;
+      }
+      throw new Error('Gemini response was empty');
+    } catch (e) {
+      console.error('[GeminiService] Generation Failed:', e);
+      // Log error to file
+      try {
+        fs.appendFileSync(path.resolve('gemini_error.log'), `[${new Date().toISOString()}] ${e.toString()} \nStack: ${e.stack}\n\n`);
+      } catch (fsErr) {
+        console.error('Could not write to error log:', fsErr);
+      }
+      return null; // Signals fallback needed
     }
+  }
 };

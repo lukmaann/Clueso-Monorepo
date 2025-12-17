@@ -22,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Hardened `.gitignore` to recursively exclude **all** environment files (`.env`, `.env.local`, `.env.production`) from every subdirectory (`apps/*/`).
     - Removed sensitive artifact files (`metadata.json`, `found_models.json`) and temporary debug scripts (`debug_keys.js`, `test_tts.js`) to prevent key leakage.
 
+### Bug Fixes & Infrastructure
+- **Connection Stability**:
+    - Enforced usage of **Gemini 2.5 Flash** model (`gemini-2.5-flash`) to resolve `404 Not Found` errors caused by model access issues.
+    - Implemented stricter port binding: Frontend strictly on `3000` and Backend strictly on `3001` (via `strictPort: true` and `.env` config) to prevent port conflicts during restarts.
+- **Cleanup**:
+    - Removed temporary debug scripts (`debug_gemini.js`, `debug_gemini.mjs`) and error log files (`alllogs.log`, `gemini_error.log`) to maintain repository hygiene.
+
 ### Architecture & Codebase Cleanup
 - **Organization**:
     - Removed empty directory clutter (`src/utils`, `src/components/ui`) to maintain a clean workspace.
