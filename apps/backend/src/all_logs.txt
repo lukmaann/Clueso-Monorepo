@@ -97,3 +97,55 @@ Data: {
   "duration": 31.045
 }
 ----------------------------------
+[2025-12-17T09:43:53.953Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-17T09:43:54.449Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-17T09:43:54.453Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-17T09:43:54.488Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 52.067,
+  "eventCount": 6,
+  "url": "https://aistudio.google.com/api-keys"
+}
+----------------------------------
+[2025-12-17T09:43:54.528Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 52.067
+}
+----------------------------------
+[2025-12-17T09:48:15.187Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-17T09:49:48.181Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-17T09:49:48.451Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-17T09:49:48.454Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-17T09:49:48.520Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 42.527,
+  "eventCount": 6,
+  "url": "https://aistudio.google.com/api-keys"
+}
+----------------------------------
+[2025-12-17T09:49:48.578Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 42.527
+}
+----------------------------------
+[2025-12-17T10:03:03.976Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-17T10:03:40.212Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-17T10:03:50.112Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 1.917
+}
+----------------------------------
+[2025-12-17T10:05:36.518Z] [APP] [INFO] Logger Initialized
+----------------------------------
