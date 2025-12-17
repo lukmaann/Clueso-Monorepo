@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Port Stability**: Fixed random port binding issues by enforcing strict ports (`3000` for FE, `3001` for BE). See [BUG_FIXES_LOG.md#2-application-port-conflicts](docs/BUG_FIXES_LOG.md).
 
 ### Infrastructure
-- **Documentation**: Added `docs/BUG_FIXES_LOG.md` to track error details and solutions.
+- **Documentation**: 
+    - Added `docs/BUG_FIXES_LOG.md` to track error details and solutions.
+    - Updated `docs/SYSTEM_DIAGRAMS.md` with new Class/Entity diagrams and refined Architecture charts.
 - **Cleanup**: Removed sensitive/temporary debug files (`debug_gemini.js`, `alllogs.log`).
 
 ## [0.1.0] - 2025-12-16
