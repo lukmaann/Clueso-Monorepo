@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [0.1.2] - 2025-12-17
+### Changed
+- **UX/UI**: 
+    - **Zoom Removal**: Removed the automatic "Zoom In/Out" visual effect from the video player to eliminate disruptive flickering and improve focus.
+    - **Video Synchronization**: Implemented intelligent "Audio-Wait" logic. The video player now automatically asserts a pause at the end of a step if the AI narration is still active, ensuring the user hears the full explanation before the visual context changes.
+- **Added**:
+    - **AI Engineering**: 
+        - Updated the **Gemini System Prompt** to enforce the generation of a dedicated "Introductory Step" (Step 1).
+        - The AI now deduces the user's high-level goal and explicitly instructs them to navigate to the starting URL at the beginning of the guide.
+    - **Mock Fallback**:
+        - Updated the `MockService` to mirror the AI's behavior by prepending a standardized "Introduction" step to generated guides when the AI is unavailable.
+
 ## [0.1.1] - 2025-12-17
 ### Fixed
 - **Critical AI Failure**: Resolved `404 Not Found` from Gemini API by upgrading model to `gemini-2.5-flash`. See [BUG_FIXES_LOG.md#1-gemini-model-access-error-404-not-found](docs/BUG_FIXES_LOG.md).

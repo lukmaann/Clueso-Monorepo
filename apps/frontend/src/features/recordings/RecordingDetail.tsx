@@ -13,7 +13,7 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
     const [rec, setRec] = useState<Recording | null>(null);
     const [activeTab, setActiveTab] = useState<'guide' | 'transcript'>('guide');
     const [isPlaying, setIsPlaying] = useState(false);
-    const [zoomStyle, setZoomStyle] = useState({});
+
     const [audioMode, setAudioMode] = useState<'ai' | 'original'>('ai');
 
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -73,7 +73,9 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
         }
     };
 
-    // Effect: Handle Video Sync & Zoom (Visual Only)
+    const isWaitingForAudioRef = useRef(false);
+
+    // Effect: Handle Video Sync (Visual Only)
     useEffect(() => {
         const v = videoRef.current;
         if (!v || !rec?.generatedGuide) return;
@@ -84,26 +86,22 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
             const currentStepIndex = steps.findIndex(s => t >= s.timestamp.startMs && t < s.timestamp.endMs);
             const currentStep = steps[currentStepIndex];
 
-            // Zoom Logic
-            if (currentStep && currentStep.zoom && t >= currentStep.zoom.zoomInMs && t <= currentStep.zoom.zoomOutMs) {
-                const meta = rec.generatedGuide!.videoMeta;
-                const xPct = (currentStep.zoom.focusCenter.x / meta.resolution.width) * 100;
-                const yPct = (currentStep.zoom.focusCenter.y / meta.resolution.height) * 100;
-                setZoomStyle({
-                    transform: `scale(${currentStep.zoom.scale})`,
-                    transformOrigin: `${xPct}% ${yPct}%`,
-                    transition: 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-                });
-            } else {
-                setZoomStyle({ transform: 'scale(1)', transformOrigin: 'center center', transition: 'transform 0.8s' });
-            }
-
-            // Sync AI Audio Trigger (If we just entered a new step)
+            // Sync AI Audio Trigger
             if (audioMode === 'ai' && isPlaying) {
+                // 1. Trigger Audio for new step
                 if (currentStepIndex !== -1 && currentStepIndex !== lastPlayedStepRef.current) {
                     lastPlayedStepRef.current = currentStepIndex;
-                    // Trigger the specific audio for this step immediately
                     playAiAudioForStep(currentStepIndex);
+                }
+
+                // 2. Check for Sync (Pause video if audio needs more time)
+                if (currentStep && currentAiAudioRef.current && !currentAiAudioRef.current.paused) {
+                    const timeRemainingInStep = currentStep.timestamp.endMs - t;
+                    // If we are near the end of the step (< 200ms) and audio is still playing
+                    if (timeRemainingInStep < 200 && !currentAiAudioRef.current.ended) {
+                        isWaitingForAudioRef.current = true;
+                        v.pause();
+                    }
                 }
             }
         };
@@ -116,10 +114,22 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
 
             const audio = new Audio(step.audio.audioUrl);
             currentAiAudioRef.current = audio;
+
+            // Resume video when audio ends (if we were waiting)
+            audio.onended = () => {
+                if (isWaitingForAudioRef.current && v.paused) {
+                    isWaitingForAudioRef.current = false;
+                    v.play();
+                }
+            };
+
             audio.play().catch(e => console.warn("AI Audio Autoplay blocked", e));
         };
 
         const handlePause = () => {
+            // Ignore pause if it's our internal sync pause
+            if (isWaitingForAudioRef.current) return;
+
             setIsPlaying(false);
             if (audioMode === 'ai' && currentAiAudioRef.current) currentAiAudioRef.current.pause();
         };
@@ -128,7 +138,8 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
 
         const handleSeek = () => {
             if (currentAiAudioRef.current) currentAiAudioRef.current.pause();
-            lastPlayedStepRef.current = -1; // Reset so next time update triggers audio
+            lastPlayedStepRef.current = -1;
+            isWaitingForAudioRef.current = false;
         };
 
         v.addEventListener('timeupdate', handleTimeUpdate);
@@ -179,7 +190,6 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
                             ref={videoRef}
                             src={rec.videoUrl}
                             className="w-full h-full object-contain"
-                            style={zoomStyle}
                             controls={false}
                             muted={audioMode === 'ai'}
                             onClick={() => {

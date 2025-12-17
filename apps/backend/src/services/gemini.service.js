@@ -40,12 +40,13 @@ export const GeminiService = {
       Convert this into an event-driven instructional JSON.
       
       RULES:
+      - **INTRO STEP (CRITICAL)**: The FIRST step (Step 1) MUST be an introductory step.
+        - Deduce the user's goal from the events and transcript.
+        - Narration: "In this guide, I will show you how to [Goal]. To get started, navigate to [URL/Website Name]."
+        - Instruction: "Navigate to [URL] and [Goal]"
       - Group audio chunks by interaction.
       - Create a step for every meaningful DOM event (click, nav, input).
       - Generate "narrationText" that is Natural, Imperative, and Action-Oriented.
-      - Calculate "zoom" focus regions centered on the element (scale 1.5).
-      - **CRITICAL**: The "zoom" should NOT last the entire step. 
-        Set "zoomOutMs" to be at least 1000ms BEFORE "endMs" (if step duration allows).
       - "startMs" and "endMs" must match the event times from the log.
       
       OUTPUT: Return ONLY valid JSON matching this schema:
@@ -60,8 +61,7 @@ export const GeminiService = {
             "timestamp": { "startMs": number, "endMs": number },
             "audio": { "chunkId": string, "rawTranscript": string, "narrationText": string },
             "element": { "tag": string, "text": string, "selector": string },
-            "coordinates": { "x": number, "y": number, "width": number, "height": number },
-            "zoom": { "zoomInMs": number, "zoomOutMs": number, "focusCenter": { "x": number, "y": number }, "scale": number }
+            "coordinates": { "x": number, "y": number, "width": number, "height": number }
           }
         ],
         "timelineIndex": [{ "stepIndex": number, "jumpToMs": number, "label": string }]

@@ -2,6 +2,35 @@
 
 This document tracks critical bugs encountered during development, their root causes, and the specific fixes implemented. It serves as a knowledge base for future troubleshooting.
 
+## [2025-12-17] Video Zoom Glitch & Audio Clipping
+
+### 3. Video Zoom Flicker & Audio Cut-off
+**Severity**: High (User Experience degraded)
+**Issue**: 
+1. **Zoom Flicker**: The "zoom" effect was applying/un-applying rapidly because the video playback time `t` would drift in and out of the calculated `zoomInMs` - `zoomOutMs` window within a single step.
+2. **Audio Clipping**: The video would advance to the next step based on the recorded timestamp events. If the AI-generated voiceover was longer than the recorded user action, the audio was abruptly cut off when the step changed.
+
+**Resolution / Fix**:
+- **Action**: 
+    - **Removed Zoom**: Completely removed the unstable zoom effect logic from the player.
+    - **Implemented Sync Lock**: Added a `isWaitingForAudioRef` lock. The player checks if the video is within `200ms` of the step end; if `audio.ended` is false, it pauses the video. An `audio.onended` listener resumes the video.
+- **File Modified**: [`apps/frontend/src/features/recordings/RecordingDetail.tsx`](../apps/frontend/src/features/recordings/RecordingDetail.tsx)
+- **Code Change**:
+  ```typescript
+  // Synchronized Audio-Video Playback
+  if (timeRemainingInStep < 200 && !currentAiAudioRef.current.ended) {
+      isWaitingForAudioRef.current = true;
+      videoRef.current.pause(); // Wait for audio
+  }
+  
+  audio.onended = () => {
+      if (isWaitingForAudioRef.current) {
+          isWaitingForAudioRef.current = false;
+          videoRef.current.play(); // Resume
+      }
+  };
+  ```
+
 ## [2025-12-17] Gemini API 404 & Port Instability
 
 ### 1. Gemini Model Access Error (404 Not Found)
