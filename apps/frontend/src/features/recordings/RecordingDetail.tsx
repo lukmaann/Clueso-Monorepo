@@ -302,9 +302,9 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
 
                                     {/* Time Display */}
                                     <div className="text-white/60 text-sm font-mono tracking-wider">
-                                        {videoRef.current ? new Date(videoRef.current.currentTime * 1000).toISOString().substr(14, 5) : "00:00"}
+                                        {videoRef.current && Number.isFinite(videoRef.current.currentTime) ? new Date(videoRef.current.currentTime * 1000).toISOString().substr(14, 5) : "00:00"}
                                         <span className="opacity-50 mx-1">/</span>
-                                        {videoRef.current ? new Date(videoRef.current.duration * 1000).toISOString().substr(14, 5) : "00:00"}
+                                        {videoRef.current && Number.isFinite(videoRef.current.duration) ? new Date(videoRef.current.duration * 1000).toISOString().substr(14, 5) : "00:00"}
                                     </div>
                                 </div>
 
