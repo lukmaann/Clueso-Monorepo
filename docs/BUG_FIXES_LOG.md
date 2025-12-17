@@ -2,6 +2,32 @@
 
 This document tracks critical bugs encountered during development, their root causes, and the specific fixes implemented. It serves as a knowledge base for future troubleshooting.
 
+## [2025-12-17] Video Player Crash (RangeError)
+
+### 4. Invalid Time Value Crash
+**Severity**: High (Application Crash)
+**Error Log**:
+```
+Uncaught RangeError: Invalid time value at Date.toISOString (<anonymous>)
+    at RecordingDetail (RecordingDetail.tsx:307:104)
+```
+**Root Cause**: 
+The video player attempted to render the duration/current time using `new Date(time * 1000).toISOString()` while the video metadata was still loading. In this transient state, `videoRef.current.duration` can be `NaN` or `Infinity`, which `Date` cannot parse, causing a React rendering crash.
+
+**Resolution / Fix**:
+- **Action**: Added a safety check `Number.isFinite(...)` before attempting to format the time.
+- **File Modified**: [`apps/frontend/src/features/recordings/RecordingDetail.tsx`](../apps/frontend/src/features/recordings/RecordingDetail.tsx)
+- **Code Change**:
+  ```typescript
+  // BEFORE
+  {videoRef.current ? new Date(videoRef.current.currentTime * 1000).toISOString()... : "00:00"}
+  
+  // AFTER
+  {videoRef.current && Number.isFinite(videoRef.current.currentTime) 
+      ? new Date(videoRef.current.currentTime * 1000).toISOString()... 
+      : "00:00"}
+  ```
+
 ## [2025-12-17] Video Zoom Glitch & Audio Clipping
 
 ### 3. Video Zoom Flicker & Audio Cut-off

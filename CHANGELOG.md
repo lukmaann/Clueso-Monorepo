@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Added hover previews for steps on the timeline.
     - Polished UI with smooth gradients and better interactivity.
 
+### Fixed
+- **Application Crash**: Fixed `RangeError: Invalid time value` in video player by adding finite number checks before date formatting. See [BUG_FIXES_LOG.md#4-invalid-time-value-crash](docs/BUG_FIXES_LOG.md).
+
 ### Changed
 - **UX/UI**: 
     - **Zoom Removal**: Removed the automatic "Zoom In/Out" visual effect from the video player to eliminate disruptive flickering and improve focus.
@@ -27,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.1] - 2025-12-17
 ### Fixed
+
 - **Critical AI Failure**: Resolved `404 Not Found` from Gemini API by upgrading model to `gemini-2.5-flash`. See [BUG_FIXES_LOG.md#1-gemini-model-access-error-404-not-found](docs/BUG_FIXES_LOG.md).
 - **Port Stability**: Fixed random port binding issues by enforcing strict ports (`3000` for FE, `3001` for BE). See [BUG_FIXES_LOG.md#2-application-port-conflicts](docs/BUG_FIXES_LOG.md).
 
