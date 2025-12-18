@@ -120,6 +120,7 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
             if (currentAiAudioRef.current) currentAiAudioRef.current.pause();
 
             const audio = new Audio(step.audio.audioUrl);
+            audio.volume = volume; // Apply current volume immediately
             currentAiAudioRef.current = audio;
 
             // Resume video when audio ends (if we were waiting)
@@ -141,7 +142,14 @@ export function RecordingDetail({ id, onBack }: RecordingDetailProps) {
             if (audioMode === 'ai' && currentAiAudioRef.current) currentAiAudioRef.current.pause();
         };
 
-        const handlePlay = () => setIsPlaying(true);
+        const handlePlay = () => {
+            setIsPlaying(true);
+            // Resume AI audio if we are simply resuming playback
+            if (audioMode === 'ai' && currentAiAudioRef.current && currentAiAudioRef.current.paused) {
+                currentAiAudioRef.current.volume = volume;
+                currentAiAudioRef.current.play().catch(e => console.warn("Resume audio blocked", e));
+            }
+        };
 
         const handleSeek = () => {
             if (currentAiAudioRef.current) currentAiAudioRef.current.pause();

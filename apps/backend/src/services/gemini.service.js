@@ -71,7 +71,29 @@ export const GeminiService = {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", generationConfig: { responseMimeType: "application/json" } });
-      const result = await model.generateContent(prompt);
+
+      let result;
+      let lastError;
+      const MAX_RETRIES = 3;
+      const BASE_DELAY = 2000;
+
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        try {
+          result = await model.generateContent(prompt);
+          break; // Success
+        } catch (e) {
+          lastError = e;
+          const isOverloaded = e.message?.includes('503') || e.message?.includes('overloaded');
+
+          if (attempt < MAX_RETRIES && isOverloaded) {
+            const delay = BASE_DELAY * Math.pow(2, attempt);
+            console.warn(`[GeminiService] Model overloaded (503). Retrying in ${delay}ms... (Attempt ${attempt + 1}/${MAX_RETRIES})`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          } else {
+            throw e; // Non-retriable or max retries reached
+          }
+        }
+      }
       const response = result.response;
 
       if (response.text()) {

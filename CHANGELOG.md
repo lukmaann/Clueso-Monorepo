@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.1.3] - 2025-12-18
+### Added
+- **Feature**: **RAG (Retrieval-Augmented Generation) Knowledge Base**
+    - Implemented a backend `RagService` to vectorize and store generated guides.
+    - Added automatic "Ingestion" step to the video processing pipeline. Every new guide is now indexed for future search.
+    - Added `/api/rag/ask` endpoint allowing users to ask natural language questions about their existing guides.
+    - **Tech Stack**: Uses **Gemini Text-Embedding-004** for vectors and **Gemini 2.5 Flash** for answer generation.
+
 ## [0.1.2] - 2025-12-17
 ### Added
 - **Feat**: Enhanced Video Player

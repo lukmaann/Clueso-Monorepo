@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { recordingRoutes } from './routes/recording.routes.js';
+import { ragRoutes } from './routes/rag.routes.js';
 import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -57,6 +58,7 @@ app.post('/log', (req, res) => {
 
 // --- API ROUTES ---
 app.use('/api/recordings', recordingRoutes);
+app.use('/api/rag', ragRoutes);
 
 app.listen(PORT, () => {
     console.log(`\n> Backend Server running on http://localhost:${PORT}`);
