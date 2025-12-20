@@ -145,6 +145,13 @@ The recorder is a local Chrome Extension that must be loaded manually.
 *   **Solution**: The backend is configured for 50MB limits. If recording extremely long sessions (>10 mins), consider splitting them into smaller clips.
 
 ---
+## 🚀 Deployment
+
+Since this project handles large video files and vector databases, it requires a generic Linux VPS (Virtual Private Server) for deployment. 
+
+**[Click here for the Step-by-Step Deployment Guide](./docs/DEPLOYMENT.md)**
+
+---
 
 ## Documentation Links
 

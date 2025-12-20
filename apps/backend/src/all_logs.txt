@@ -302,3 +302,83 @@ Data: {
   "duration": 34.933
 }
 ----------------------------------
+[2025-12-20T06:56:42.402Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-20T06:56:42.659Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-20T06:56:42.660Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-20T06:56:42.799Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 50.53,
+  "eventCount": 6,
+  "url": "https://chatgpt.com/c/6946488b-5664-8321-9740-254ccd10a20a"
+}
+----------------------------------
+[2025-12-20T06:56:42.831Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 50.53
+}
+----------------------------------
+[2025-12-20T07:10:29.461Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-20T07:10:29.616Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-20T07:10:29.617Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-20T07:10:29.780Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 50.762,
+  "eventCount": 5,
+  "url": "https://chatgpt.com/c/69464bc9-ddf0-8321-8e6c-fd803e59b988"
+}
+----------------------------------
+[2025-12-20T07:10:29.880Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 50.762
+}
+----------------------------------
+[2025-12-20T12:21:01.673Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-20T12:21:56.092Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-20T12:21:56.571Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-20T12:21:56.572Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-20T12:21:56.602Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 40.642,
+  "eventCount": 5,
+  "url": "https://chatgpt.com/g/g-p-694694d1d25c8191b10895c3fa121e25/project"
+}
+----------------------------------
+[2025-12-20T12:21:56.640Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 40.642
+}
+----------------------------------
+[2025-12-20T12:23:35.527Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-20T12:24:06.645Z] [APP] [INFO] Logger Initialized
+----------------------------------
+[2025-12-20T12:24:07.565Z] [EXT] [DEBUG] Handshake received from extension
+----------------------------------
+[2025-12-20T12:24:07.566Z] [APP] [DEBUG] Sent CLUESO_APP_READY ack
+----------------------------------
+[2025-12-20T12:24:07.581Z] [EXT] [INFO] Received Recording Data
+Data: {
+  "duration": 20.572,
+  "eventCount": 3,
+  "url": "https://chatgpt.com/g/g-p-6946955c89bc8191bac809a0c3600485/project"
+}
+----------------------------------
+[2025-12-20T12:24:07.597Z] [API] [INFO] Uploading Recording to Backend
+Data: {
+  "userId": "demo-user-1",
+  "duration": 20.572
+}
+----------------------------------
