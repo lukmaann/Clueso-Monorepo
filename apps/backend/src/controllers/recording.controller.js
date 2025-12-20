@@ -1,6 +1,7 @@
 
 import { db } from '../db.js';
 import { ProductAI } from '../services/ai.service.js';
+import { RagService } from '../services/rag.service.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -133,6 +134,14 @@ export const RecordingController = {
             audioStatus: 'completed',
             generatedGuide: guide
         });
+
+        // 6. RAG Ingestion (Async)
+        try {
+            await RagService.addGuideToKnowledgeBase(id, guide);
+        } catch (ragErr) {
+            console.error(`[Pipeline] RAG Ingestion failed for ${id}`, ragErr);
+        }
+
         console.log(`[Pipeline] Completed for ${id}`);
     }
 };

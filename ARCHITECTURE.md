@@ -81,8 +81,21 @@ I utilize **Deepgram** for both Speech-to-Text (STT) and Text-to-Speech (TTS).
 *   For a tutorial and SaaS product, clarity and speed are prioritized over emotional depth. Deepgram provides the optimal balance of quality and performance for this use case.
 
 ### Intelligence: Google Gemini Flash
-*   I utilize **Gemini Flash 1.5** due to its extensive context window—capable of processing long transcripts—and its cost-effectiveness and speed advantage over GPT-4.
+*   I utilize **Gemini 2.5 Flash** due to its extensive context window—capable of processing long transcripts—and its cost-effectiveness and speed advantage over GPT-4.
 *   It functions as the central logic engine, structuring raw click logs and transcripts into a formatted JSON guide.
+
+### Knowledge Engine: RAG (Retrieval-Augmented Generation)
+I have evolved the system from a static guide generator into a dynamic **Knowledge Base**.
+
+#### What is it?
+A subsystem that "reads" every generated guide, understands its semantic meaning, and allows users to ask natural language questions against the entire library of content.
+
+#### How it works?
+1.  **Vector Database (MVP)**: A local-first JSON store (`knowledge_base.json`) holding 768-dimensional vector embeddings of guides.
+2.  **Semantic Search**: Uses **Cosine Similarity** to match user queries (e.g., "How do I reset password?") with relevant guides, even without exact keyword matches.
+3.  **Models**:
+    *   **Embeddings**: `text-embedding-004` deals with the math (Text-to-Vector).
+    *   **Generation**: `gemini-2.5-flash` deals with the answer synthesis (Context + Query -> Answer).
 
 ### Frontend: React + Vite
 *   **Vite**: Selected for its superior Hot Module Replacement (HMR) performance and modern ES module support.
