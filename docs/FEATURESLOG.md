@@ -21,6 +21,8 @@ Instead of the AI generating instructions purely from transcripts, it now retrie
 Because we now capture discrete, deterministic events (e.g., `Input 'Search'` -> `Enter` -> `Click 'Result'`), we have the exact data structures needed to generate **Mermaid.js Flowcharts** and **Sequence Diagrams** automatically. 
 Unlike transcript-only generation which produces "fuzzy" narratives, Grounded Generation produces a directed graph of user actions, allowing us to visualize complex workflows with 100% accuracy.
 
+> **Deep Dive**: For a detailed breakdown of the Old vs. New architecture with diagrams, see [../UPDATES.md](../UPDATES.md).
+
 ---
 
 ## [2025-12-18] RAG Knowledge Base (v0.1.3)

@@ -1,42 +1,47 @@
-# Extension Documentation (Layer: Source)
+# Extension Documentation (Layer: The Interceptor)
 
 ## Overview
-The Chrome Extension is the "Eyes and Ears" of the system. It lives in the user's browser and captures raw data using native Web APIs.
+The Chrome Extension is the "Eyes and Ears" of the Clueso system. It is responsible for **Data Capture**.
+Unlike traditional recorders that just capture pixels, this extension **intercepts the execution flow** of the user's browser interactions.
 
-## Core Components (Manifest V3)
+## Core Components
 
-### 1. `manifest.json`
-*   **Permissions**: `activeTab`, `scripting`, `offscreen` (for audio recording).
-*   **Host Permissions**: `http://localhost:3001/*` (to allow uploading).
+### 1. `content.js` (The DOM Interceptor)
+This script acts as a "Spy" injected into the target page. It builds the **Event Log** which serves as the **Source of Truth** for the AI.
 
-### 2. `content.js` (The Spy)
-Injected into the page being recorded. It listens for DOM events.
-*   **Event Listeners**: `click`, `input`, `scroll`.
-*   **Logic**: When a user clicks, it captures:
-    *   Target Element (Tag, ID, Class).
-    *   Coordinates (x, y).
-    *   Timestamp (relative to recording start).
+*   **Role**: Discrete Event Capture.
+*   **Listeners**:
+    *   `click`: Captures unique selectors (ID, Class hierarchy) and X/Y coordinates.
+    *   `input`: Captures text entry (debounced).
+    *   `keydown` (Enter): Captures submission intent.
+    *   `navigation`: Detects URL changes.
+*   **Output**: An Array of Event Objects (e.g., `[{ time: 1050, type: 'click', target: '#login-btn' }]`).
 
-### 3. `background.js` (The Manager)
-Handles the state of the recording (Start/Stop).
-*   **MediaRecorder**: Captures the tab's video stream.
-*   **Audio Handling**: Since Chrome extensions are tricky with audio, we often allow mic access via an `offscreen` document or standard user gesture.
+### 2. `background.js` (The Media Orchestrator)
+This script manages the binary data streams.
+
+*   **Role**: Video/Audio Capture.
+*   **API**: `chrome.tabCapture` / `getDisplayMedia`.
+*   **Format**: `video/webm; codecs=vp9` (Variable Bitrate).
+*   **Audio**: Captures both System Audio (Tab sound) and Mic Audio (User voice).
 
 ---
 
-## The Recording Lifecycle
+## Data Handshake (The "Upload" Protocol)
 
-1.  **User Clicks Record**: 
-    -   `background.js` gets the active tab stream.
-    -   `content.js` initializes event listeners.
-2.  **During Recording**:
-    -   Video chunks (`Blob`) accumulate in memory in `background.js`.
-    -   Events array accumulates in `content.js`.
-3.  **User Clicks Stop**:
-    -   `content.js` sends the final array of events -> `background.js`.
-    -   `background.js` creates a `FormData` object.
-    -   **Upload**: The extension performs a `fetch()` to the Backend.
-    -   **Redirect**: Opens a new tab to `http://localhost:3000/recording/{id}`.
+When recording stops, the Extension performs a complex "Handshake" to ensure zero data loss:
 
-## Security Note
-The extension intentionally does **not** process video. This keeps it lightweight and prevents the browser from crashing due to memory usage. It just "dumps" raw data to the server.
+1.  **Stop Signal**: User clicks "Stop".
+2.  **Aggregation**:
+    *   `content.js` sends the `EventLog[]` to `background.js`.
+    *   `background.js` finalizes the `VideoBlob`.
+3.  **Transmission**:
+    *   Constructs a `FormData` object containing: `video`, `audio` (optional), and `events` (JSON string).
+    *   POSTs to `http://localhost:3001/api/recordings/upload`.
+4.  **Handoff**:
+    *   Upon 200 OK, the Extension opens the Dashboard URL (`localhost:3000/recording/{uuid}`).
+    *   The Extension's job is done.
+
+## Security & Performance
+*   **Passivity**: The extension *never* sends data to external servers directly. All data goes to the local Backend instance.
+*   **Memory**: Large video chunks are streamed or blobbed immediately to avoid crashing the browser tab during long sessions.

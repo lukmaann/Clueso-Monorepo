@@ -1,55 +1,56 @@
-# Frontend Documentation (Layer: Consumer)
+# Frontend Documentation (Layer: The Presentation)
 
 ## Overview
-The Frontend is a **React (Vite)** application responsible for two main things:
-1.  **Dashboard**: Allowing users to view their list of recordings.
-2.  **Player Experience**: An interactive "Guide Mode" that syncs video playback with generated step-by-step instructions.
+The Frontend is a **React (Vite)** application tailored for high-fidelity playback. It is more than a video player; it is an **Interactive Documentation Reader**.
 
-## Key Technologies
--   **React 18**: core UI library.
--   **Vite**: Build tool for fast HMR.
--   **Lucide React**: Iconography.
--   **Fetch API**: For communicating with the Backend.
+## Key Responsibilities
+1.  **Sync Engine**: Maintains frame-perfect synchronization between `video.currentTime` and the `Active Step` in the sidebar.
+2.  **Navigation**: Allows users to click a text step ("Click Submit") and immediately seek the video to that exact moment (`24.5s`).
+3.  **Search Interface**: Provides the UI for the RAG Knowledge Base.
 
-## State Management & Logic
-The frontend is deliberately kept "dumb". It does not process video or calculate steps. It only expects a **Ready-to-Render** JSON object from the Backend.
+## Core Logic: The "Sync Engine"
+The sync engine connects the fluid video stream with the discrete step blocks.
 
-### The "Step Sync" Logic
-The most complex part of the frontend is the `VideoPlayer` component. It must synchronize the video's `currentTime` with the active step in the sidebar.
+### The Algorithm
+The backend provides steps with `timestamp: { startMs, endMs }`.
+The video player provides `currentTime` in **Seconds**.
 
-```javascript
-// Logic pattern in VideoPlayer.js
-const onTimeUpdate = (time) => {
-  // Find the step where current time falls between start and end
-  const activeStep = steps.find(step => 
-    time >= step.timestamp.startMs && 
-    time <= step.timestamp.endMs
+We bridge this using a `useEffect` hook or `onTimeUpdate` handler:
+
+```typescript
+// Conceptual Implementation in RecordingDetail.tsx
+const handleTimeUpdate = (currentTimeSeconds: number) => {
+  const currentTimeMs = currentTimeSeconds * 1000;
+
+  const currentStep = guide.steps.find(step => 
+    currentTimeMs >= step.timestamp.startMs && 
+    currentTimeMs < step.timestamp.endMs
   );
-  
-  if (activeStep) {
-    highlightSidebar(activeStep.id);
-    // Optional: Trigger auto-zoom if implemented
+
+  if (currentStep && currentStep.id !== activeStepId) {
+    setActiveStep(currentStep.id);
+    scrollSidebarToStep(currentStep.id);
   }
-}
+};
 ```
 
-## API Consumption
+## Component Architecture
 
-### 1. Fetching a Recording
-**GET** `http://localhost:3001/api/recordings/:id`
+### `RecordingDetail.tsx` (The Controller)
+*   **State**: `videoUrl`, `guideData`, `activeStepIndex`.
+*   **Effect**: Fetches data from `/api/recordings/:id` on mount.
+*   **Render**: Splits screen into `<VideoPlayer />` (Left) and `<StepList />` (Right).
 
-**Response Expected:**
-```json
-{
-  "id": "123",
-  "videoUrl": "/uploads/video_123.webm",
-  "steps": [ ... ] // See DATA_FLOW.md for exact shape
-}
-```
+### `VideoPlayer.tsx`
+*   **Ref**: Holds the direct reference to the `<video>` HTML element.
+*   **Events**: Emits `onTimeUpdate` to the parent.
 
----
+### `StepList.tsx`
+*   **Props**: `steps[]`, `activeStepIndex`.
+*   **Behavior**: When `activeStepIndex` changes, it uses `scrollIntoView` to keep the context visible.
 
-## File Structure
--   `src/App.jsx`: Main router and layout.
--   `src/components/`: Reusable UI atoms (Buttons, Cards).
--   `src/pages/Player.jsx`: The main view for consuming a guide.
+## Data Integration
+The frontend is agnostic to *how* the guide was generated (Transcript vs Event). It simply consumes the JSON contract defined in `DATA_FLOW.md`.
+
+*   **Endpoint**: `GET /api/recordings/:id`
+*   **Contract**: Expects `steps` array with millisecond-precision timestamps.

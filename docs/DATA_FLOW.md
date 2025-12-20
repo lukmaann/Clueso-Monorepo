@@ -1,118 +1,101 @@
-# Data Flow & Interactions (The "Grand Unified Theory")
+# Data Flow: The "Grounded Generation" Pipeline
 
-This document details exactly how data moves through the system, step-by-step.
+This document explains the lifecycle of a piece of knowledge in Clueso, from a user's physical click to a searchable answer in the Knowledge Base.
 
 ---
 
-## 1. The Interaction Flow
+## 1. The Core Pipeline (Capture -> Synthesize)
+
+The flow is unidirectional and deterministic.
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant E as Extension
-    participant B as Backend
-    participant AI as Deepgram/Gemini
-    participant F as Frontend
+    participant DOM as Browser DOM
+    participant Ext as Extension
+    participant BE as Backend API
+    participant GEM as Gemini 2.5
+    participant DB as Vector Store
 
-    U->>E: Click "Start Recording"
-    E->>E: Start MediaRecorder + Click Listeners
-    
-    U->>E: Performs Actions (Clicks, Talks)
-    E->>E: Buffers Video Blobs & Event Log
-    
-    U->>E: Click "Stop"
-    E->>B: POST /upload (Video + Audio + Events)
-    B-->>E: 200 OK { id: "123" }
-    
-    E->>F: Open Tab (localhost:3000/recording/123)
-    F->>B: GET /recordings/123
-    
-    par Async Processing (Backend)
-        B->>AI: Send Audio
-        AI-->>B: Return Transcript
-        B->>AI: Send Transcript + Events
-        AI-->>B: Return Structured Guide
-        B->>B: Save "guide.json"
+    rect rgb(240, 248, 255)
+    note over U, Ext: Phase 1: Capture
+    U->>DOM: Clicks Button
+    DOM->>Ext: Log Event { time: 500ms, target: '#submit' }
+    DOM->>Ext: Stream Video Frames
+    U->>Ext: "I am clicking submit" (Voice)
     end
-    
-    B-->>F: Return Final Guide JSON
-    F->>U: Render Video + Steps
+
+    rect rgb(255, 248, 240)
+    note over Ext, BE: Phase 2: Ingestion
+    Ext->>BE: Upload Multipart (Video + Audio + Events)
+    BE->>BE: Transcode Audio -> Text (Deepgram)
+    end
+
+    rect rgb(240, 255, 240)
+    note over BE, GEM: Phase 3: Grounded Synthesis
+    BE->>GEM: Prompt: "Here is the Event Log (Truth) + Transcript (Context)"
+    GEM->>GEM: Map Events to Steps
+    GEM-->>BE: Return JSON Guide
+    end
+
+    rect rgb(255, 240, 255)
+    note over BE, DB: Phase 4: Indexing (RAG)
+    BE->>DB: Embed Guide (Text-to-Vector)
+    DB->>DB: Save to Knowledge Base
+    end
 ```
 
 ---
 
-## 2. Deepgram Payload Structure
+## 2. Data Structures
 
-When we send audio to Deepgram, we receive a complex generic response. We are interested in the **Transcript**.
-
-**Deepgram Response (Simplified):**
+### A. The Input: `EventLog`
+A raw list of meaningful DOM interactions.
 ```json
-{
-  "metadata": { ... },
-  "results": {
-    "channels": [
-      {
-        "alternatives": [
-          {
-            "transcript": "Click on the dashboard button.",
-            "confidence": 0.99,
-            "words": [
-              { "word": "click", "start": 1.2, "end": 1.5 },
-              { "word": "on", "start": 1.5, "end": 1.6 }
-            ]
-          }
-        ]
-      }
-    ]
+[
+  {
+    "timestamp": 1050,
+    "type": "input",
+    "target": { "selector": "#search-bar", "tagName": "INPUT" },
+    "value": "How to deploy"
+  },
+  {
+    "timestamp": 2100,
+    "type": "keydown",
+    "key": "Enter"
   }
-}
+]
 ```
-*We parse `results.channels[0].alternatives[0].transcript` to send to Gemini.*
 
----
-
-## 3. The "Guide" Object (The Core Data Model)
-
-This is the final JSON that the Backend saves and the Frontend reads. It is the "Source of Truth" for a tutorial.
-
+### B. The Output: `GuideJSON`
+The synthesized instruction set.
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "meta": {
-    "duration": 45.5,
-    "createdAt": "2024-12-16T10:00:00Z",
-    "title": "How to update profile settings"
-  },
-  "assets": {
-    "video": "/uploads/video_550e.webm",
-    "audio": "/uploads/audio_550e.mp3"
-  },
+  "title": "How to deploy a project",
+  "videoMeta": { "duration": 15.5 },
   "steps": [
     {
-      "order": 1,
-      "startTime": 1.2, /* Seconds */
-      "endTime": 4.5,
-      "text": "Click on the User Avatar in the top right.",
-      "actionType": "click",
-      "coordinates": {
-        "x": 1800,
-        "y": 50,
-        "width": 100,
-        "height": 100
-      }
+      "stepIndex": 1,
+      "instruction": "Type 'How to deploy' into the search bar.",
+      "timestamp": { "startMs": 1000, "endMs": 2100 },
+      "eventType": "input",
+      "element": { "selector": "#search-bar" }
     },
     {
-      "order": 2,
-      "startTime": 4.6,
-      "endTime": 8.0,
-      "text": "Select 'Settings' from the dropdown menu.",
-      "actionType": "click",
-      "coordinates": { ... }
+      "stepIndex": 2,
+      "instruction": "Press Enter to submit the search.",
+      "timestamp": { "startMs": 2100, "endMs": 2500 },
+      "eventType": "keydown"
     }
   ]
 }
 ```
 
-## 4. Why this Structure?
-*   **`startTime` / `endTime`**: Crucial for the frontend. The video player listens to `timeupdate`. If `currentTime` is between 1.2 and 4.5, Highlight Step 1.
-*   **`coordinates`**: Used to draw a box overlay on top of the video canvas (The "Zoom" effect).
+---
+
+## 3. The "Grounding" Logic
+**Why this matters**:
+The Backend does *not* blindly trust the transcript.
+1.  **Alignment**: It looks for an Event timestamp (`1050ms`) closely matching a Transcript phrase "I'll type this in" (`900ms-1200ms`).
+2.  **Validation**: If the user says "Click delete" but the Event Log shows `Click #cancel`, the Event Log wins (it avoids the destructive hallucination).
+3.  **Precision**: Timestamps in the Guide output come directly from the Event Log, ensuring the video player loops perfectly around the action.
