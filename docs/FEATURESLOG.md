@@ -2,6 +2,27 @@
 
 > This document tracks the detailed implementation of features, including technical explanations, code locations, and behavior.
 
+
+## [2025-12-20] Grounded Instruction Generation (v0.1.4)
+
+### 1. Overview
+Instead of the AI generating instructions purely from transcripts, it now retrieves the most relevant steps, timestamps, and UI events from the actual recording and then generates explanations **grounded in that data**. This makes step descriptions more accurate, avoids hallucinations, and sets up the foundation for features like semantic step search and in-video Q&A.
+
+### 2. Why Grounded Generation? (The Problem vs. Solution)
+*   **The Problem**: Generating instructions solely from audio transcripts can lead to "hallucinations" where the AI invents steps that didn't happen, or misses silent but critical UI interactions (like clicking a generic "Submit" button).
+*   **The Solution**: By grounding the generation in the actual *Event Log* (clicks, navigation, inputs) captured by the extension, the AI creates a factual execution plan. It "sees" what you did, not just hears what you said.
+
+### 3. Technical Implementation
+*   **Data Fusion**: The `GeminiService` constructs a context that combines the `rawTranscript`, `videoDuration`, and a structured `DOM Events Log`.
+*   **Strict Prompting**: The system prompt now explicitly instructs the AI to "Create a step for every meaningful DOM event" and ensures that `startMs` and `endMs` align with the actual event timestamps.
+*   **Result**: A generated guide that is a 1:1 map of the user's physical actions on screen.
+
+### 4. Strategic Benefit: Automated Diagrams
+Because we now capture discrete, deterministic events (e.g., `Input 'Search'` -> `Enter` -> `Click 'Result'`), we have the exact data structures needed to generate **Mermaid.js Flowcharts** and **Sequence Diagrams** automatically. 
+Unlike transcript-only generation which produces "fuzzy" narratives, Grounded Generation produces a directed graph of user actions, allowing us to visualize complex workflows with 100% accuracy.
+
+---
+
 ## [2025-12-18] RAG Knowledge Base (v0.1.3)
 
 ### 1. Overview

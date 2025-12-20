@@ -78,6 +78,8 @@ async function startRecording() {
 
         // C. Start Event Listeners
         window.addEventListener('click', handleUserClick, true);
+        window.addEventListener('input', handleInput, true);
+        window.addEventListener('keydown', handleKeydown, true);
 
         console.log('Clueso Recorder Started');
 
@@ -94,6 +96,8 @@ async function stopRecording() {
         mediaRecorder.onstop = async () => {
             const blob = new Blob(chunks, { type: 'video/webm' });
             window.removeEventListener('click', handleUserClick, true);
+            window.removeEventListener('input', handleInput, true);
+            window.removeEventListener('keydown', handleKeydown, true);
             stream.getTracks().forEach(t => t.stop());
 
             console.log('Recording finished. Events:', events.length);
@@ -130,10 +134,12 @@ function getTargetDetails(element) {
     };
 }
 
+
 function handleUserClick(e) {
     if (!isRecording) return;
     const target = e.target;
 
+    // Ignore clicks on Clueso UI if any (future proofing)
 
     const details = getTargetDetails(target);
     events.push({
@@ -143,6 +149,42 @@ function handleUserClick(e) {
         x: e.clientX,
         y: e.clientY
     });
+}
+
+// Debounce helper
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+// Input Handler (Debounced to avoid flood)
+const handleInput = debounce((e) => {
+    if (!isRecording) return;
+    const target = e.target;
+    console.log('[Clueso Recorder] Input Captured:', target.value); // DEBUG
+
+    events.push({
+        timestamp: Date.now() - startTime,
+        type: 'input',
+        target: getTargetDetails(target),
+        value: target.value ? target.value.slice(0, 100) : '' // Capture partial input for context
+    });
+}, 1000);
+
+// Keydown (specifically for Enter)
+function handleKeydown(e) {
+    if (!isRecording) return;
+    if (e.key === 'Enter') {
+        console.log('[Clueso Recorder] Enter Key Captured'); // DEBUG
+        events.push({
+            timestamp: Date.now() - startTime,
+            type: 'keydown_enter',
+            target: getTargetDetails(e.target)
+        });
+    }
 }
 
 // --- 4. DATA BRIDGE TO LOCALHOST ---
